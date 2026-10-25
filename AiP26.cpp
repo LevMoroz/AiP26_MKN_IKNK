@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <cstring>
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -187,7 +188,7 @@ int main()
     int** a = (int**)malloc(n * sizeof(int*));
     if (a == 0) return 1;
     a[0] = (int*)malloc(n * m * sizeof(int));
-    if (a[0] == 0) return 1;
+    if (a[0] == 0) return 1; //
 
     for (int i = 0; i < n; ++i)
         a[i] = a[0] + i * m;
@@ -250,7 +251,7 @@ int main()
               */
 
     float* b = (float*)malloc(n * sizeof(float));
-    if (b == 0) return 1;
+    if (b == 0) return 1; //
 
     for (int i = 0; i < n; ++i)
     {
@@ -260,9 +261,9 @@ int main()
         b[i] = (float)ss / m;
     }
     // По определению сделал; для конкретной задачи, возможно, стоит сразу делить на m
-    //free(a[0]);
-    //free(a);
-    //free(b);
+    free(a[0]);
+    free(a);
+    free(b);
               /**
                * Задание 2.4.
                *
@@ -277,8 +278,8 @@ int main()
                * означает, что где-то не удалена выделенная память.
                */
 
-    // valgrind ещё можно, но здесь придётся довольствоваться таким)
-    // Утечек нет))
+    // valgrind ещё можно, но здесь придётся довольствоваться crt)
+    // Утечек нет!
 
                /**
                 * Задание 3.
@@ -287,8 +288,8 @@ int main()
                 /**
                  * Задание 3.1. Онлайн-упорядочивание.
                  *
-                 * Напишите фрагмент кода, который вводит N целых чисел с помощью потока
-                 * ввода в объявленный Вами встроенный одномерный массив, каждый раз
+                 * Напишите фрагмент кода, который вводит N(???) целых чисел с помощью потока
+                 * ввода в объявленный вами встроенный(???) одномерный массив, каждый раз
                  * упорядочивая полученное значение по возрастанию.
                  *
                  * Дайте оценку количества сравнений и перестановок при вводе всех чисел
@@ -298,6 +299,36 @@ int main()
                  * k*N^2, где k - некоторое число.
                  */
 
+    n = 8;
+    int* c = (int*)malloc(n * sizeof(int));
+    if (c == 0) return 1; //
+    
+    cout << endl;
+    for (int i = 0; i < n; ++i) // N итераций цикла
+    {
+        int inp;
+        cin >> inp;
+
+        int new_pos = i;
+        for (int j = 0; j < i; ++j) // Можно искать нужную позицию и хитрее, ведь слева всё отсортировано... Но сложность алгоритма не изменится!
+            if (c[j] >= inp) // не более чем N сравнений
+            {
+                new_pos = j;
+                break;
+            }     
+
+        for (int j = i - 1; j >= new_pos; --j)
+            c[j + 1] = c[j]; // Не более чем N перемещений
+
+        c[new_pos] = inp;
+    }
+    // Итоговая сложность - O(N^2)
+
+    cout << endl;
+    for (int i = 0; i < n; ++i)
+        cout << c[i] << ' ';
+    cout << endl;
+
                  /**
                   * Задание 3.2. Простой поиск.
                   *
@@ -306,7 +337,44 @@ int main()
                   * дубли игнорируются).
                   */
 
+    cout << endl;
+    for (int i = 0; i < n; ++i)
+    {
+        int inp;
+        cin >> inp;
 
+        int new_pos = i;
+        bool is_rep = 0;
+        for (int j = 0; j < i; ++j)
+            if (c[j] > inp)
+            {
+                new_pos = j;
+                break;
+            }
+            else if (c[j] == inp)
+            {
+                is_rep = 1;
+                break;
+            }
+
+        if (is_rep)
+        {
+            --i;
+            continue;
+        }
+
+        for (int j = i - 1; j >= new_pos; --j)
+            c[j + 1] = c[j];
+
+        c[new_pos] = inp;
+    }
+
+    cout << endl;
+    for (int i = 0; i < n; ++i)
+        cout << c[i] << ' ';
+    cout << endl;
+
+    free(c);
                   /**
                    * Задание 4. Сортировка строк.
                    *
@@ -329,20 +397,24 @@ int main()
     {
         /** Определите необходимые значения как константы */
 
-        // STOP_STRING  -  "*"  //признак "прекратить ввод"
-        // M  -  80 //максимальный размер одной строки
-        // N  -  10 //максимальное количество строк в массиве
+        const char STOP_STRING[2] = "*";  // признак "прекратить ввод"
+        const int M = 80; // максимальный размер одной строки
+        const int N = 10; // максимальное количество строк в массиве
 
         /**
          * Объявите двухмерный массив с именем cBuffer типа char и размерностью
          * N*M.
          */
 
+        char cBuffer[N][M];
+        int actual_size = 0; // Можно и через нулевые указатели, но так будет быстрее!
+
          /**
           * Объявите массив (с именем cPointers) указателей на строки
           * размерностью N.
           */
 
+        char* cPointers[N];
 
           /**
            * Цикл ввода строк:
@@ -350,19 +422,23 @@ int main()
            * 2. пока не введена строка STOP_STRING или не заполнен весь массив;
            */
 
+        cout << endl << "Please, enter <= 10 strings with size <= 79 symbols" << endl;
+
+        for (int i = 0; i < N; ++i)
         {
             /** ввод строки в массив cBuffer: */
-
+            cin >> cBuffer[i];
             /** если введена строка - признак окончания, то выйти из цикла */
-
+            if (strcmp(cBuffer[i], STOP_STRING) == 0)
+                break;
             /** Присвойте элементу массива cPointers с индексом nIndex */
-
             /** указатель на строку с номером nIndex в массиве cBuffer */
-
+            cPointers[i] = cBuffer[i];
+            ++actual_size;
         }
 
-
         /** Выдать диагностику о том, что прием строк завершен.*/
+        cout << "Strings entered!" << endl << endl;
 
         /**
          * Теперь сортируем строки.
@@ -373,6 +449,22 @@ int main()
          * На каждой итерации - промежуточная печать отсортированных строк.
          */
 
+        for (int i = 0; i < actual_size; ++i)
+        {
+            for (int j = 0; j < actual_size - i - 1; ++j)
+            {
+                if (strcmp(cPointers[j], cPointers[j + 1]) > 0)
+                {
+                    char* t = cPointers[j + 1];
+                    cPointers[j + 1] = cPointers[j];
+                    cPointers[j] = t;
+                }
+            }
+
+            cout << endl;
+            for (int k = 0; k < actual_size; ++k)
+                cout << cPointers[k] << endl;
+        }
     }
 
     /*
@@ -529,9 +621,11 @@ int main()
     {
 
     }
-
-    _CrtSetReportMode()
-    //_CrtDumpMemoryLeaks();
+    
+    cout << endl;
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+    _CrtDumpMemoryLeaks();
     //_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     return 0;
 }
