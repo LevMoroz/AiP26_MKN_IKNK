@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
+#include <cstdio>
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -426,8 +427,8 @@ int main()
 
         for (int i = 0; i < N; ++i)
         {
-            /** ввод строки в массив cBuffer: */
-            cin >> cBuffer[i];
+            /** ввод строки в массив cBuffer: */ //todo
+            cin >> cBuffer[i]; // С последних версий стандарта лишние символы не испортят; иначе нужно использовать cin.getline или fgets, ...
             /** если введена строка - признак окончания, то выйти из цикла */
             if (strcmp(cBuffer[i], STOP_STRING) == 0)
                 break;
@@ -451,7 +452,7 @@ int main()
 
         for (int i = 0; i < actual_size; ++i)
         {
-            for (int j = 0; j < actual_size - i - 1; ++j)
+            for (int j = 0; j < actual_size - i - 1; ++j) // Есть ещё флаговая оптимизация...
             {
                 if (strcmp(cPointers[j], cPointers[j + 1]) > 0)
                 {
@@ -460,7 +461,7 @@ int main()
                     cPointers[j] = t;
                 }
             }
-
+            
             cout << endl;
             for (int k = 0; k < actual_size; ++k)
                 cout << cPointers[k] << endl;
@@ -486,8 +487,15 @@ int main()
 
     {
         int nStringNumber;
+        cout << endl;
+        cin >> nStringNumber;
 
         /** Цикл ввода строк: */
+
+        for (int i = 0; i < nStringNumber; ++i)
+        {
+            ;;;
+        }
 
         /**
          * Цикл сортировки строк по методу "всплывающего пузырька" в порядке
