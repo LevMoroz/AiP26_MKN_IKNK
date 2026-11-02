@@ -302,7 +302,7 @@ int main()
 
     n = 8;
     int* c = (int*)malloc(n * sizeof(int));
-    if (c == 0) return 1; //
+    if (c == 0) return 1;
     
     cout << endl;
     for (int i = 0; i < n; ++i) // N итераций цикла
@@ -408,7 +408,7 @@ int main()
          */
 
         char cBuffer[N][M];
-        int actual_size = 0; // Можно и через нулевые указатели, но так будет быстрее!
+        int actual_size = 0; // Можно и через нулевые указатели, но так будет быстрее! size_t...
 
          /**
           * Объявите массив (с именем cPointers) указателей на строки
@@ -427,8 +427,8 @@ int main()
 
         for (int i = 0; i < N; ++i)
         {
-            /** ввод строки в массив cBuffer: */ //todo
-            cin >> cBuffer[i]; // С последних версий стандарта лишние символы не испортят; иначе нужно использовать cin.getline или fgets, ...
+            /** ввод строки в массив cBuffer: */
+            cin >> cBuffer[i]; // По условию именно такой ввод)
             /** если введена строка - признак окончания, то выйти из цикла */
             if (strcmp(cBuffer[i], STOP_STRING) == 0)
                 break;
@@ -449,22 +449,28 @@ int main()
          *
          * На каждой итерации - промежуточная печать отсортированных строк.
          */
-
-        for (int i = 0; i < actual_size; ++i)
+        
+        for (int i = 0; i < actual_size - 1; ++i)
         {
-            for (int j = 0; j < actual_size - i - 1; ++j) // Есть ещё флаговая оптимизация...
+            bool stop = 1;
+
+            for (int j = 0; j < actual_size - i - 1; ++j)
             {
                 if (strcmp(cPointers[j], cPointers[j + 1]) > 0)
                 {
                     char* t = cPointers[j + 1];
                     cPointers[j + 1] = cPointers[j];
                     cPointers[j] = t;
+                    stop = 0;
                 }
             }
-            
+
             cout << endl;
             for (int k = 0; k < actual_size; ++k)
                 cout << cPointers[k] << endl;
+
+            if (stop)
+                break;
         }
     }
 
@@ -487,14 +493,30 @@ int main()
 
     {
         int nStringNumber;
-        cout << endl;
+        cout << endl << "String number: ";
         cin >> nStringNumber;
+        cout << endl;
+
+        char** sPointers = (char**)malloc(nStringNumber * sizeof(char*));
+        if (!sPointers) return 1;
 
         /** Цикл ввода строк: */
 
         for (int i = 0; i < nStringNumber; ++i)
         {
-            ;;;
+            sPointers[i] = (char*)malloc(sizeof(char));
+            int l = 1;
+
+            for (;;)
+            {
+                char inp;
+                cin >> inp;
+
+                if (inp != '\n')
+                {
+                    sPointers[i] = (char*)realloc(sPointers[i], ++l);
+                }
+            }
         }
 
         /**
