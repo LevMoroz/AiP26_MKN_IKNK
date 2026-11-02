@@ -495,37 +495,79 @@ int main()
         int nStringNumber;
         cout << endl << "String number: ";
         cin >> nStringNumber;
-        cout << endl;
+        cin.ignore();
 
         char** sPointers = (char**)malloc(nStringNumber * sizeof(char*));
         if (!sPointers) return 1;
 
         /** Цикл ввода строк: */
-
         for (int i = 0; i < nStringNumber; ++i)
         {
-            sPointers[i] = (char*)malloc(sizeof(char));
-            int l = 1;
+            char* t = (char*)malloc(8 * sizeof(char));
+            if (t == 0) return 1; //
 
-            for (;;)
+            int len = 0, cap = 8;
+            char inp;
+
+            while (cin.get(inp) && inp != '\n') // Считываем по одному символу; концом строки считаем только \n
             {
-                char inp;
-                cin >> inp;
-
-                if (inp != '\n')
+                if (len + 1 >= cap)
                 {
-                    sPointers[i] = (char*)realloc(sPointers[i], ++l);
+                    cap *= 2;
+                    char* tt = (char*)realloc(t, cap); // Увеличиваем массив, если уже не хватает места
+                    if (tt == 0) return 1; //
+                    t = tt;
                 }
+
+                t[len++] = inp;
             }
+
+            t[len++] = '\0';
+
+            if (len < cap)
+            {
+                char* tt = (char*)realloc(t, len); // Сужаемся, не занимаем лишне место)
+                if (tt == 0) return 1; //
+                t = tt;
+            }
+
+            sPointers[i] = t;
         }
+
+        // Тут можно ввод по-разному делать, у меня как в векторе, можно через массив-буфер фиксированной длины...
 
         /**
          * Цикл сортировки строк по методу "всплывающего пузырька" в порядке
          * возрастания кода первого символа.
          */
 
-         /** Освобождение занятой памяти */
+        for (int i = 0; i < nStringNumber - 1; ++i)
+        {
+            bool stop = 1;
 
+            for (int j = 0; j < nStringNumber - i - 1; ++j)
+            {
+                if (sPointers[j][0] > sPointers[j + 1][0])
+                {
+                    char* t = sPointers[j + 1];
+                    sPointers[j + 1] = sPointers[j];
+                    sPointers[j] = t;
+                    stop = 0;
+                }
+            }
+
+            cout << endl;
+            for (int k = 0; k < nStringNumber; ++k)
+                cout << sPointers[k] << endl;
+
+            if (stop)
+                break;
+        }
+
+        /** Освобождение занятой памяти */
+        for (int i = 0; i < nStringNumber; ++i)
+            free(sPointers[i]);
+        free(sPointers);
     }
 
     /**
