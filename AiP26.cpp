@@ -577,10 +577,10 @@ int main()
      * размера), после чего пользователю выводится на консоль следующее
      * изображение, где его ввод помещен в "speech bubble":
      *
-     *  _____________________________________
-     * / Here user input is shown. This line \
-     * \ must be at most 40 characters long. /
-     *  ------------------------------------
+     *  #==========================================#
+     * // Here user input is shown. This line must \\
+     * \\ be at most 40 characters long.           //
+     *  #==========================================#
      *     \
      *      \
      *        /\_/\  (
@@ -600,57 +600,217 @@ int main()
      *  языке С, это позволит задавать подобные рисунки так, чтобы они
      *  адекватно выглядели в коде.
      */
+    {
+        cout << endl;
+        cout << "Enter speech:" << endl; // Такой же ввод строки
+
+        char* str = (char*)malloc(8 * sizeof(char));
+        if (str == 0) return 1; //
+
+        int ind = 0, cap = 8;
+        char inp;
+
+        while (cin.get(inp) && inp != '\n')
+        {
+            if (ind + 1 >= cap)
+            {
+                cap *= 2;
+                char* tt = (char*)realloc(str, cap);
+                if (tt == 0) return 1; //
+                str = tt;
+            }
+
+            str[ind++] = inp;
+        }
+        str[ind++] = '\0';
+
+        if (ind < cap)
+        {
+            char* tt = (char*)realloc(str, ind);
+            if (tt == 0) return 1; //
+            str = tt;
+        }
+        cout << endl;
 
 
-     /**
-      * Задание 7. Сложные указатели.
-      *
-      * Объявление и использование указателей на многомерные массивы.
-      * Проинициализируйте трехмерный массив double dArray[4][3][3] так, как
-      * показано на рисунке и напишите фрагмент кода, который меняет местами
-      * значения элементов четных и нечетных слоев:
-      *
-      *  было:                |--------|
-      *                     / |4  4  4 |
-      *                   |--------| 4 |
-      *                 / |3  3  3 | 4 |
-      *               |---------|3 |   |
-      *             / | 2  2  2 |3 | /
-      *            |---------|2 |__|
-      *            | 1  1  1 |2 | /
-      *            | 1  1  1 |__|
-      *            | 1  1  1 | /
-      *            |_________|
-      *
-      *  стало:               |--------|
-      *                     / |3  3  3 |
-      *                   |--------| 3 |
-      *                 / |4  4  4 | 3 |
-      *               |---------|4 |   |
-      *             / | 1  1  1 |4 | /
-      *            |---------|1 |__|
-      *            | 2  2  2 |1 | /
-      *            | 2  2  2 |__|
-      *            | 2  2  2 | /
-      *            |_________|
-      */
+        const char* border = "  #==========================================#";
+        cout << border << endl;
+
+        const int max_l = 40;
+        const int left_border_l = 4;
+        const int right_border_l = 3;
+
+        int cur_l = 0;
+        char out[max_l + left_border_l + right_border_l + 1] = "\0";
+        bool is_first = 1;
+        char* word = strtok(str, " "); // "Лишние" пробелы будут ликвидированы. И ладно)
+
+        while (word)
+        {
+            if (cur_l == 0)
+            {
+                if (is_first)
+                    strcat(out, " // ");
+                else
+                    strcat(out, " #  ");
+            }
+
+            int word_l = strlen(word);
+
+            if (word_l <= max_l)
+            {
+                if (word_l <= max_l - cur_l)
+                {
+                    strcat(out, word);
+                    cur_l += word_l;
+
+                    if (cur_l < max_l)
+                    {
+                        strcat(out, " ");
+                        ++cur_l;
+                    }
+                }
+                else
+                {
+                    for (int i = cur_l; i < max_l; ++i)
+                        out[i + left_border_l] = ' ';
+
+                    out[max_l + left_border_l] = '\0'; // Иначе будет грустно с конкатенацией ниже)
+
+                    if (is_first)
+                    {
+                        strcat(out, " \\\\");
+                        is_first = 0;
+                    }
+                    else
+                        strcat(out, "  #");
+
+                    cout << out << endl;
+                    cur_l = 0;
+                    out[0] = '\0'; // Оптимизируем "обнуление" текущей строки вывода
+                    continue;
+                }
+            }
+            else
+            {
+                for (int i = cur_l; i < max_l; ++i)
+                    out[i + left_border_l] = word[i - cur_l];
+
+                word += max_l - cur_l;
+                out[max_l + left_border_l] = '\0';
+
+                if (is_first)
+                {
+                    strcat(out, " \\\\");
+                    is_first = 0;
+                }
+                else
+                    strcat(out, "  #");
+
+                cout << out << endl;
+                cur_l = 0;
+                out[0] = '\0';
+                continue;
+            }
+
+            word = strtok(NULL, " ");
+        }
+
+
+        if (is_first)
+        {
+            out[1] = ' ';
+            out[2] = '+';
+        }
+        else
+        {
+            out[1] = '\\';
+            out[2] = '\\';
+        }
+
+        for (int i = cur_l; i < max_l; ++i)
+            out[i + left_border_l] = ' ';
+
+        out[max_l + left_border_l] = '\0';
+
+        if (is_first)
+            strcat(out, " +");
+        else
+            strcat(out, " //");
+
+        cout << out << endl;
+        cout << border << endl;
+
+        cout << "     \\" << endl;
+        cout << "      \\" << endl;
+        cout << "        /\\_/\\  (" << endl;
+        cout << "       ( ^.^ ) _)" << endl;
+        cout << "         \\\"/  (" << endl;
+        cout << "       ( | | )" << endl;
+        cout << "      (__d b__)" << endl;
+
+        free(str);
+    }
+
+    /**
+     * Задание 7. Сложные указатели.
+     *
+     * Объявление и использование указателей на многомерные массивы.
+     * Проинициализируйте трехмерный массив double dArray[4][3][3] так, как
+     * показано на рисунке и напишите фрагмент кода, который меняет местами
+     * значения элементов четных и нечетных слоев:
+     *
+     *  было:                |--------|
+     *                     / |4  4  4 |
+     *                   |--------| 4 |
+     *                 / |3  3  3 | 4 |
+     *               |---------|3 |   |
+     *             / | 2  2  2 |3 | /
+     *            |---------|2 |__|
+     *            | 1  1  1 |2 | /
+     *            | 1  1  1 |__|
+     *            | 1  1  1 | /
+     *            |_________|
+     *
+     *  стало:               |--------|
+     *                     / |3  3  3 |
+     *                   |--------| 3 |
+     *                 / |4  4  4 | 3 |
+     *               |---------|4 |   |
+     *             / | 1  1  1 |4 | /
+     *            |---------|1 |__|
+     *            | 2  2  2 |1 | /
+     *            | 2  2  2 |__|
+     *            | 2  2  2 | /
+     *            |_________|
+     */
 
     {
+        double dArray[4][3][3];
 
-        // for(int i=0; i<...; ...)
+        for (int i = 0; i < 4; ++i)
+            for (int j = 0; j < 3; ++j)
+                for (int k = 0; k < 3; ++k)
+                    dArray[i][j][k] = i + 1;
+
+        for (int i = 0; i < 4; i += 2)
         {
-
             /**
              * Замечание: НЕ НУЖНО МОДИФИЦИРОВАТЬ ВЫРАЖЕНИЯ СПРАВА ОТ ЗНАКА
              * РАВЕНСТВА!!!
-             */
+            */
 
-             // ... =  dArray[i];
-             // ... =  dArray[i+1];
+            double (*le)[3] = dArray[i];
+            double (*lo)[3] = dArray[i + 1];
 
-             /** переставляем местами элементы i-того и i+1-ого слоев */
-
-
+            /** переставляем местами элементы i-того и i+1-ого слоев */
+            for (int i = 0; i < 3; ++i)
+                for (int j = 0; j < 3; ++j)
+                {
+                    double t = le[i][j];
+                    le[i][j] = lo[i][j];
+                    lo[i][j] = t;
+                }
         }
     }
 
