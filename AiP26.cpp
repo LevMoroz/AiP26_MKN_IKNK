@@ -4,10 +4,8 @@
  */
 
 #include <iostream>
-#include <cstdlib>
 #include <ctime>
 #include <cstring>
-#include <cstdio>
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -753,7 +751,7 @@ int main()
     }
 
     /**
-     * Задание 7. Сложные указатели.
+     * Задание 7.0 Сложные указатели.
      *
      * Объявление и использование указателей на многомерные массивы.
      * Проинициализируйте трехмерный массив double dArray[4][3][3] так, как
@@ -839,7 +837,32 @@ int main()
       */
 
     {
+        const int size = 5;
+        char c[size][size];
 
+        for (int i = 0; i < size; ++i)
+            for (int j = 0; j < size; ++j)
+                c[i][j] = rand() % 2 == 0 ? '*' : '_';
+
+        for (int i = 0; i < size; ++i)
+        {
+            int amount = 0; // Сортировка подсчётом
+            for (int j = 0; j < size; ++j)
+                if (c[i][j] == '*')
+                    ++amount;
+
+            for (int j = 0; j < size; ++j)
+                c[i][j] = j < amount ? '*' : '_';
+            // Для одной строки - N сравнений и столько же условных присваиваний, итого: O(N) для каждой строки.
+        }
+
+        for (int i = 0; i < size; ++i)
+        {
+            for (int j = 0; j < size; ++j)
+                cout << c[i][j];
+            cout << endl;
+        }
+        cout << endl;
     }
 
     /**
@@ -851,13 +874,36 @@ int main()
      */
 
     {
+        const int size = 6;
+        char c[size][size];
 
+        for (int i = 0; i < size; ++i)
+            for (int j = 0; j < size; ++j)
+                c[i][j] = rand() % 2 == 0 ? '*' : '_';
+
+        for (int i = 0; i < size; ++i)
+        {
+            int amount = 0; // Сортировка подсчётом
+            for (int j = 0; j < size; ++j)
+                if (c[j][i] == '*')
+                    ++amount;
+
+            for (int j = size - 1; j >= 0; --j)
+                c[j][i] = j >= size - amount ? '*' : '_';
+            // Для одного столбца - N сравнений и столько же условных присваиваний, итого: O(N) для каждого столбца.
+        }
+
+        for (int i = 0; i < size; ++i)
+        {
+            for (int j = 0; j < size; ++j)
+                cout << c[i][j];
+            cout << endl;
+        }
     }
     
     cout << endl;
     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
     _CrtDumpMemoryLeaks();
-    //_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     return 0;
 }
