@@ -12,7 +12,7 @@ endif()
 project ("AiP26")
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (AiP26 "AiP26.cpp")
+add_executable (AiP26 "AiP26.cpp" "other.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET AiP26 PROPERTY CXX_STANDARD 20)

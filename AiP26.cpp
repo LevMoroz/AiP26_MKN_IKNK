@@ -18,7 +18,9 @@ int main()
      */
 
     {
-
+        double x = 0.0;
+        double& xp = x;
+        xp++;
     }
 
     /**
@@ -28,7 +30,7 @@ int main()
      * компилятор не выдавал ошибки?
      */
     {
-        // int &ref = 1;
+        const int& ref = 1; // Ошибка была из-за того, что константа не является lvalue, теперь ссылка на константу - уже можно)
     }
 
     /**
@@ -40,8 +42,11 @@ int main()
      */
 
     {
-        char c='A';
+        char c = 'A';
         char* pc = &c;
+        char*& spc = pc;
+        *spc = 'E';
+        spc += 10;
     }
 
     /**
@@ -68,8 +73,10 @@ int main()
          * Значение этой переменной должно быть увеличено с помощью каждой из
          * функций на единицу.
          */
-        int val =1;
-
+        int val = 1;
+        val = inc_by_value(val);
+        inc_by_pointer(&val);
+        inc_by_reference(val); // = 4, ok
     }
 
     /**
@@ -90,9 +97,9 @@ int main()
         int nX = 1;
         int nY = -1;
         /** поменяли местами значения nX и nY с помощью указателей на nX и nY */
-        // swap(...  ,  ...);
+        swap(&nX, &nY);
         /** а теперь обратно с помощью ссылок на nX и nY */
-        // swap(...  ,  ...);
+        swap(nX, nY); // ok
     }
 
     /**
@@ -114,11 +121,33 @@ int main()
      */
     {
         /** Задайте массивы для проверки и проверьте результат работы функции */
+        int a[5] = { 1, 2, 3, -4, 5 };
+        int ma = min(a, 5); // -4, ok
+
+        int n = 10, m = 12;
+        int** ad = (int**)malloc(n * sizeof(int*));
+        if (ad == 0) return 1;
+        ad[0] = (int*)malloc(n * m * sizeof(int));
+        if (ad[0] == 0) return 1; //
+
+        for (int i = 0; i < n; ++i)
+            ad[i] = ad[0] + i * m;
+
+        for (int i = 0; i < n; ++i)
+            for (int j = 0; j < m; ++j)
+                ad[i][j] = - i * j;
+        
+        int mad = min(ad, n, m); // -99, ok
+        
+        free(ad[0]);
+        free(ad);
 
         /** 
          * Покажите, как можно использовать эту функцию для встроенных
          * двумерных массивов.
          */
+
+
     }
 
     /**
