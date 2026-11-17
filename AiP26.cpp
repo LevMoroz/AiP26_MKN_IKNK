@@ -6,8 +6,11 @@
 //#include <cstdio>
 //#include <cstdarg>
 
-#include "other.h"
+using std::cin;
+using std::cout;
+using std::endl;
 
+#include "other.h"
 
 int main()
 {
@@ -125,13 +128,10 @@ int main()
         int ma = min(a, 5); // -4, ok
 
         int n = 10, m = 12;
-        int** ad = (int**)malloc(n * sizeof(int*));
-        if (ad == 0) return 1;
-        ad[0] = (int*)malloc(n * m * sizeof(int));
-        if (ad[0] == 0) return 1; //
+        int** ad = new int*[n];
 
         for (int i = 0; i < n; ++i)
-            ad[i] = ad[0] + i * m;
+            ad[i] = new int[m];
 
         for (int i = 0; i < n; ++i)
             for (int j = 0; j < m; ++j)
@@ -139,15 +139,23 @@ int main()
         
         int mad = min(ad, n, m); // -99, ok
         
-        free(ad[0]);
-        free(ad);
+        for (int i = 0; i < n; ++i)
+            delete[] ad[i];
+        delete[] ad;
 
         /** 
          * Покажите, как можно использовать эту функцию для встроенных
          * двумерных массивов.
          */
 
+        int vad[10][12];
 
+        for (int i = 0; i < 10; ++i)
+            for (int j = 0; j < 12; ++j)
+                vad[i][j] = - i * j;
+
+        int mvad = min((int*)vad, 10*12); // -99, ok. Так как это непрерывный блок в памяти, рассматриваем как одномерный массив.
+        // Функцию для двумерных использовать нельзя напрямую, поскольку указатели не хранятся в памяти у встроенных массивов!
     }
 
     /**
@@ -166,10 +174,12 @@ int main()
 
     {
         /** Создайте две строки для сравнения */
-
+        const char* s1 = "1234578абуа";
+        const char* s2 = "1234578абуу";
         /** Вызовите функцию сравнения */
-        
         /** Выведите результат сравнения с помощью cout */
+        cout << my_str_cmp(s1, s2) << endl;
+        return -1;
     }
 
     /**

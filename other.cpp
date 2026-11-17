@@ -1,3 +1,5 @@
+#include <climits>
+
 #include "other.h"
 
 int inc_by_value(int v)
@@ -29,10 +31,10 @@ void swap(int& x, int& y)
 	y = t;
 }
 
-int min(int* a, int len)
+int min(const int* a, int len)
 {
-	if (len <= 0)
-		return -1; // Классическое обозначение ошибки в Си...
+	if (len <= 0 || !a)
+		return INT_MAX; // Для обозначения ошибки... Нужна ли проверка?
 
 	int m = a[0];
 
@@ -43,10 +45,10 @@ int min(int* a, int len)
 	return m;
 }
 
-int min(int** a, int rows, int cols)
+int min(const int* const* a, int rows, int cols)
 {
-	if (rows <= 0 || cols <= 0)
-		return -1;
+	if (rows <= 0 || cols <= 0 || !a)
+		return INT_MAX;
 	
 	int m = a[0][0];
 
@@ -58,4 +60,15 @@ int min(int** a, int rows, int cols)
 	}
 
 	return m;
+}
+
+int my_str_cmp(const char* str1, const char* str2)
+{
+	while (*str1 && *str1 == *str2)
+	{
+		++str1;
+		++str2;
+	}
+
+	return (unsigned char)*str1 - (unsigned char)*str2; // Для корректной работы с русским алфавитом, например
 }
