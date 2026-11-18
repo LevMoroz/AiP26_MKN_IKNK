@@ -1,4 +1,4 @@
-#include <climits>
+#include <cassert>
 
 #include "other.h"
 
@@ -33,8 +33,7 @@ void swap(int& x, int& y)
 
 int min(const int* a, int len)
 {
-	if (len <= 0 || !a)
-		return INT_MAX; // Для обозначения ошибки... Нужна ли проверка?
+	assert(len > 0 && a);
 
 	int m = a[0];
 
@@ -47,8 +46,7 @@ int min(const int* a, int len)
 
 int min(const int* const* a, int rows, int cols)
 {
-	if (rows <= 0 || cols <= 0 || !a)
-		return INT_MAX;
+	assert(rows > 0 && cols > 0 && a);
 	
 	int m = a[0][0];
 
@@ -71,4 +69,31 @@ int my_str_cmp(const char* str1, const char* str2)
 	}
 
 	return (unsigned char)*str1 - (unsigned char)*str2; // Для корректной работы с русским алфавитом, например
+}
+
+int day_of_year(int day, int month, int year, const int (*part)[2][12])
+{
+	int type = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) ? 1 : 0; //
+
+	assert(part && 1 <= month && month <= 12 && 1 <= day && day <= (*part)[type][month - 1]); //
+	
+	int num = 0;
+	for (int i = 0; i < month - 1; ++i)
+		num += (*part)[type][i];
+
+	return num + day;
+}
+
+void day_of_month(int num, int year, int& day, int& month, const int (*part)[2][12])
+{
+	int type = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) ? 1 : 0;
+
+	assert(1 <= num && num <= 365 + type && part);
+
+	int i = 0;
+	for (; num > (*part)[type][i]; ++i)
+		num -= (*part)[type][i];
+
+	day = num;
+	month = i + 1;
 }
