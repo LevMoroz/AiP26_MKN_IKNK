@@ -3,6 +3,7 @@
  * параметров. Возвращение значения.
  */
 #include <iostream>
+#include <cstdlib>
 //#include <cstdio>
 //#include <cstdarg>
 
@@ -279,29 +280,30 @@ int main()
      */
 
     {
-        int n; // сформируйте значение n
-        int *arr; // создайте тут массив размера n
+        int n = 25;
+        int* arr = new int[n];
         
+        srand(time(0));
         /** заполнение случайными значениями */
-        for (int i = 0; i < n; ++i) {
-            // arr[i] = ...;
-        }
+        for (int i = 0; i < n; ++i)
+            arr[i] = rand() % 100;
+        print_array(arr, n);
 
-        for (int i = 0; i < 100; ++i) {
-            int new_value;
-            // new_value = ...; // случайное значение
-            new_value = new_value % 10;
+        for (int i = 0; i < 100; ++i) 
+        {
+            int new_value = rand() % 10;
             /** вызов функции добавления в массив */
-            // add_unique(arr, ..., new_value);  
+            add_unique(arr, n, new_value);  
         }
         
         /** печать массива на экран */
-        // print_array(arr, ...)
-
+        print_array(arr, n);
+        delete[] arr;
         /**
          * Тут должно быть не более 10 + n элементов, так как во втором цикле
          * могут быть получены только 10 разных вариантов.
          */
+        // VVV
     }
 
     /**
@@ -310,6 +312,8 @@ int main()
      * Напишите рекурсивную функцию вычисления суммы первых N натуральных
      * чисел.
      */
+
+    cout << sumN(10) << endl;
 
     /**
      * Задание 7. Кодирование-декодирование информации. Обработка ошибок.

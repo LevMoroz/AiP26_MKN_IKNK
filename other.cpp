@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 
 #include "other.h"
 
@@ -44,7 +45,7 @@ int min(const int* a, int len)
 	return m;
 }
 
-int min(const int* const* a, int rows, int cols)
+int min(const int* const* a, int rows, int cols) //
 {
 	assert(rows > 0 && cols > 0 && a);
 	
@@ -73,9 +74,9 @@ int my_str_cmp(const char* str1, const char* str2)
 
 int day_of_year(int day, int month, int year, const int (*part)[2][12])
 {
-	int type = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) ? 1 : 0; //
+	int type = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) ? 1 : 0;
 
-	assert(part && 1 <= month && month <= 12 && 1 <= day && day <= (*part)[type][month - 1]); //
+	assert(part && 1 <= month && month <= 12 && 1 <= day && day <= (*part)[type][month - 1]);
 	
 	int num = 0;
 	for (int i = 0; i < month - 1; ++i)
@@ -96,4 +97,36 @@ void day_of_month(int num, int year, int& day, int& month, const int (*part)[2][
 
 	day = num;
 	month = i + 1;
+}
+
+void print_array(const int* a, int len)
+{
+	assert(a && len >= 0);
+	for (int i = 0; i < len; ++i)
+		std::cout << a[i] << ' ';
+	std::cout << std::endl;
+}
+
+int add_unique(int*& arr, int& len, int new_value)
+{
+	assert(arr && len >= 0);
+	for (int i = 0; i < len; ++i)
+		if (arr[i] == new_value)
+			return 1;
+
+	int* arr2 = new int[len + 1];
+	for (int i = 0; i < len; ++i)
+		arr2[i] = arr[i];
+
+	arr2[len++] = new_value;
+	delete[] arr;
+	arr = arr2;
+
+	return 0;
+}
+
+int sumN(int n)
+{
+	assert(n > 0);
+	return n != 1 ? n + sumN(n - 1) : 1;
 }
